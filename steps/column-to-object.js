@@ -123,8 +123,9 @@ function getType(col) {
                 values: getEnumValueMap(col)
             };
         default:
-            console.log(col);
-            throw new Error('Type "' + col.dataType + '" not recognized');
+            return {
+                type: 'string'
+            };
     }
 }
 
