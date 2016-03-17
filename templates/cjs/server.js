@@ -1,38 +1,12 @@
 'use strict';
+var express = require('express');
+var graphqlHTTP = require('express-graphql');
+var schema = require('./schema');
 
-var Hapi = require('hapi');
+var app = express();
 
-var server = new Hapi.Server();
-server.connection({ port: 3000 });
+app.use('/', graphqlHTTP({ schema: schema, graphiql: true }));
 
-server.route({
-    method: 'POST',
-    path: '/graphql',
-    handler: require('./handlers/graphql'),
-    config: {
-        payload: {
-            parse: false,
-            allow: 'application/graphql'
-        }
-    }
-});
-
-server.route({
-    method: 'GET',
-    path: '/schema',
-    handler: require('./handlers/schema-printer')
-});
-
-server.route({
-    method: 'GET',
-    path: '/{param*}',
-    handler: {
-        directory: {
-            path: 'public'
-        }
-    }
-});
-
-server.start(function() {
-    console.log('Server running at:', server.info.uri);
+app.listen(3000, function () {
+  console.log('Example app listening on port 3000!');
 });

@@ -1,36 +1,11 @@
-import Hapi from 'hapi';
+var express = require('express');
+var graphqlHTTP = require('express-graphql');
+import schema from './schema';
 
-const server = new Hapi.Server();
-server.connection({ port: 3000 });
+var app = express();
 
-server.route({
-    method: 'POST',
-    path: '/graphql',
-    handler: require('./handlers/graphql'),
-    config: {
-        payload: {
-            parse: false,
-            allow: 'application/graphql'
-        }
-    }
-});
+app.use('/graphql', graphqlHTTP({ schema: schema, graphiql: true }));
 
-server.route({
-    method: 'GET',
-    path: '/schema',
-    handler: require('./handlers/schema-printer')
-});
-
-server.route({
-    method: 'GET',
-    path: '/{param*}',
-    handler: {
-        directory: {
-            path: 'public'
-        }
-    }
-});
-
-server.start(function() {
-    console.log('Server running at:', server.info.uri);
+app.listen(3000, function () {
+  console.log('Example app listening on port 3000!');
 });
