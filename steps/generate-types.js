@@ -148,10 +148,17 @@ function generateTypes(data, opts) {
             return generateRelayReferenceField(reference);
         }
 
+        function doResolve(reference) {
+            var result = find(reference.model.fields, { isPrimaryKey: true });
+            if (result) {
+                return buildResolver(reference.model, result.originalName);
+            }
+        }
+
         return generateField({
             name: reference.field,
             description: reference.description || opts.defaultDescription + ' (reference)',
-            resolve: buildResolver(reference.model, find(reference.model.fields, { isPrimaryKey: true }).originalName),
+            resolve: doResolve(reference),
             args: generateLimitOffsetArgs()
         }, b.newExpression(
             b.identifier('GraphQLList'),
